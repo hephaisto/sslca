@@ -1,0 +1,79 @@
+[ ca ]
+default_ca = my_ca
+
+[ crl_ext ]
+authorityKeyIdentifier=keyid:always
+
+[ my_ca ]
+dir = .
+new_certs_dir = $dir
+unique_subject = no
+certificate = $dir/{root_ca_crt}
+database = $dir/{cert_index}
+private_key = $dir/{root_ca_key}
+serial = $dir/{serial}
+default_days = {days_cert}
+default_md = default
+policy = myca_policy
+x509_extensions = myca_extensions
+crlnumber = $dir/{crl_number}
+default_crl_days = 10
+
+[ myca_policy ]
+countryName = match
+stateOrProvinceName = optional
+organizationName = match
+organizationalUnitName = optional
+commonName = supplied
+emailAddress = optional
+
+[ myca_extensions ]
+basicConstraints = CA:false
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always
+keyUsage = digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth
+{CDP}
+
+
+[ req ]
+default_bits		= 4096
+distinguished_name	= req_distinguished_name
+x509_extensions	= v3_ca	# The extentions to add to the self signed cert
+string_mask = utf8only
+
+
+[ req_distinguished_name ]
+countryName			= Country Name (2 letter code)
+countryName_default		= {country}
+countryName_min			= 2
+countryName_max			= 2
+
+stateOrProvinceName		= State or Province Name (full name)
+stateOrProvinceName_default	= {province}
+
+localityName			= Locality Name (eg, city)
+stateOrProvinceName_default	= {locality}
+
+0.organizationName		= Organization Name (eg, company)
+0.organizationName_default	= {organization}
+
+organizationalUnitName		= Organizational Unit Name (eg, section)
+organizationalUnitName_default	= {organization_unit}
+
+commonName			= Common Name (e.g. server FQDN or YOUR name)
+commonName_max			= 64
+
+emailAddress			= Email Address
+emailAddress_max		= 64
+
+[ v3_ca ]
+
+
+subjectKeyIdentifier=hash
+
+authorityKeyIdentifier=keyid:always,issuer
+
+basicConstraints = CA:true
+
+
