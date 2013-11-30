@@ -22,13 +22,12 @@ user_cert_folder="usercerts/"
 
 configfile="openssl.cnf"
 
-# CRL distribution point
-cdp=None
 
 defaultparams={}
 
 def save_config():
 	d.msgbox("the following data will be saved in your configuration file")
+	cdp=None
 	if d.yesno("do you have a CRL distribution point?")==d.OK:
 		cdp=d.inputbox("location of CDP")
 	global defaultparams
