@@ -102,7 +102,7 @@ def new_ca():
 def new_cert():
 	code,name=d.inputbox("FQDN for certificate")
 	if code==d.OK:
-		sp.check_call(["openssl","req","-config",configfile,"-new","-keyout",name+key_suffix,"-out",name+csr_suffix,"-subj",create_subject_line(name)])
+		sp.check_call(["openssl","req","-config",configfile,"-nodes","-new","-keyout",name+key_suffix,"-out",name+csr_suffix,"-subj",create_subject_line(name)])
 	
 def get_next_filenumber(filename):
 	i=0
