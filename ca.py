@@ -129,14 +129,19 @@ def sign_cert():
 	print(usernames)
 	code,username=d.menu("Choose a CSR",choices=usernames,width=60)
 	if code==d.OK:
-		folder=user_cert_folder+username+"/"
-		crt_basename=folder+"{}"+crt_suffix
-		if os.path.isdir(folder):
-			i=get_next_filenumber(crt_basename)
-		else:
-			os.mkdir(folder)
-			i=0
-		sp.check_call(["openssl","ca","-preserveDN","-config",configfile,"-in",username+csr_suffix,"-keyfile",root_ca_key,"-out",crt_basename.format(i)])
+		do_sign_cert(username)
+
+def do_sign_cert(username):
+	folder=user_cert_folder+username+"/"
+	crt_basename=folder+"{}"+crt_suffix
+	if os.path.isdir(folder):
+		i=get_next_filenumber(crt_basename)
+	else:
+		os.mkdir(folder)
+		i=0
+	crtname=crt_basename.format(i)
+	sp.check_call(["openssl","ca","-preserveDN","-config",configfile,"-in",username+csr_suffix,"-keyfile",root_ca_key,"-out",crtname])
+	return crtname
 
 def revoke_user():
 	userlist=find_files(user_cert_folder+"*")
@@ -172,6 +177,20 @@ def create_crl():
 	if os.path.isfile("./publish_crl"):
 		sp.check_call(["./publish_crl"])
 
+def new_cc():
+	code,username=d.inputbox("Enter name/username")
+	if code!=d.OK:
+		sys.exit()
+	subject=create_subject_line(username)
+	sp.check_call(["openssl","genrsa","-out",username+key_suffix,KEYSIZE])
+	sp.check_call(["openssl","req","-new","-key",username+key_suffix,"-out",username+csr_suffix,"-subj",subject])
+	
+	crtname=do_sign_cert(username)
+	
+	sp.check_call(["openssl","pkcs12","-export","-clcerts","-in",crtname,"-inkey",username+key_suffix,"-out",username+p12_suffix])
+	sp.check_call(["rm",username+key_suffix])
+	sp.check_call(["rm",username+csr_suffix])
+
 # MAIN
 try:
 	with open("pyconfig","rb") as f:
@@ -179,11 +198,12 @@ try:
 except:
 	pass
 while True:
-	calls={"new":new_ca,"new_cert":new_cert,"sign":sign_cert,"revoke":revoke_user,"crl":create_crl}
+	calls={"new":new_ca,"new_cert":new_cert,"sign":sign_cert,"revoke":revoke_user,"crl":create_crl,"new_cc":new_cc}
 	code,tag=d.menu("Main menu",choices=[
 		("new",		"create new CA config"),
 		("new_cert",	"create a new server key/cert"),
 		("sign",	"sign certificate using CA"),
+		("new_cc",	"create new client certificate using CA (use only if server and client are identical)"),
 		("revoke",	"revoke user certificate"),
 		("crl",		"create new certificate revocation list (CRL)")
 		])
