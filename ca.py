@@ -104,7 +104,7 @@ def new_cert():
 	if code!=d.OK:
 		return
 
-	sp.check_call(["openssl","req","-config",configfile,"-nodes","-new","-keyout",name+key_suffix,"-out",name+csr_suffix,"-subj",create_subject_line(name)])
+	sp.check_call(["openssl","req","-config",configfile,"-nodes","-new","-keyout",name+key_suffix,"-out",name+csr_suffix,"-subj",create_subject_line(name),"-extensions","extensions_server"])
 	sp.check_call(["openssl","ca","-preserveDN","-config",configfile,"-in",name+csr_suffix,"-keyfile",root_ca_key,"-out",name+crt_suffix])
 	
 def get_next_filenumber(filename):
@@ -183,7 +183,7 @@ def new_cc():
 		sys.exit()
 	subject=create_subject_line(username)
 	sp.check_call(["openssl","genrsa","-out",username+key_suffix,KEYSIZE])
-	sp.check_call(["openssl","req","-new","-key",username+key_suffix,"-out",username+csr_suffix,"-subj",subject])
+	sp.check_call(["openssl","req","-config",configfile,"-new","-key",username+key_suffix,"-out",username+csr_suffix,"-subj",subject,"-extensions","extensions_client"])
 	
 	crtname=do_sign_cert(username)
 	

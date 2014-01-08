@@ -15,7 +15,6 @@ serial = $dir/{serial}
 default_days = {days_cert}
 default_md = default
 policy = myca_policy
-x509_extensions = myca_extensions
 crlnumber = $dir/{crl_number}
 default_crl_days = 10
 
@@ -27,7 +26,7 @@ organizationalUnitName = optional
 commonName = supplied
 emailAddress = optional
 
-[ myca_extensions ]
+[ extensions_server ]
 basicConstraints = CA:false
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid:always
@@ -35,6 +34,12 @@ keyUsage = digitalSignature,keyEncipherment
 extendedKeyUsage = serverAuth
 {CDP}
 
+[ extensions_client]
+basicConstraints = CA:false
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always
+keyUsage = digitalSignature,keyEncipherment
+extendedKeyUsage = clientAuth
 
 [ req ]
 default_bits		= 4096
