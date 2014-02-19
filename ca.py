@@ -22,6 +22,8 @@ user_cert_folder="usercerts/"
 
 configfile="openssl.cnf"
 
+KEYSIZE=4096
+
 
 defaultparams={}
 
