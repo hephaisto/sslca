@@ -173,7 +173,7 @@ def revoke_user():
 	sp.check_call(["openssl","ca","-config",configfile,"-crl_reason",reason,"-revoke",certfile])
 
 def create_crl():
-	sp.check_call(["openssl","ca","-config",configfile,"-gencrl","-out",crl_file])
+	sp.check_call(["openssl","ca","-config",configfile,"-gencrl","-out",crl_file,"-crldays","365"])
 	if os.path.isfile("./publish_crl"):
 		sp.check_call(["./publish_crl"])
 
